@@ -1,0 +1,185 @@
+401 - Authorisation failed or Unauthorized
+
+>AUTHORISATION
+		if we want to give some previleges to only Admins, then it is said to be 
+		authorisation. (TO GIVE ACCESS TO ONLY SOME EMPLOYEES) -->this comes when adding an employee
+		or deleting an employee.
+
+403 - redirect to login page (if he is not the right person.)
+>AUTHENTICATION
+		whether the employee is right person or not.
+
+SERIALIZATION
+
+passport.serializeUser(function(employee, done) {
+  done(null, employee.id);
+  console.log("serial "+employee.id);
+});
+
+We serialize the user by defining the above function.
+What it does is, when the the employee or user is authenticated
+or if found in the database. This particular method saves a session
+with a unique "id" available. for the employee who is authenticated.
+
+
+passport.deserializeUser(function(id, done) {
+  Employee.getEmployeeById(id, function(err, employee) {
+    done(err, employee);
+    console.log("de-serial "+id);
+  });
+});
+
+--then after saving the session for that user, we IMMEDIATELY
+define deserializeUser method, so that the employee who has the session 
+saved through serialization, CAN be retrieved with the same unique "id"
+passed by the serialization to the deserialize method.
+
+REFER "http://stackoverflow.com/questions/27637609/understanding-passport-serialize-deserialize"
+
+SETTING THE PORT
+
+-->Method I
+app.set('port', (process.env.PORT || 3004));
+
+app.listen(app.get('port'), function(){
+	console.log('Server started on port '+app.get('port'));
+});
+
+this kind of setting the port is different from the conventional
+type of setting the port which is
+
+-->Method II
+app.listen('3004', function(){
+	console.log("server started on 3004");
+});
+
+It's always better to define the port of application
+using METHOD I, because this is something we are making our app
+work on all kinds of environments.
+
+when we say 
+app.set('port', process.env.PORT || '3004')-->
+this says that set the variable called port to the port available
+within the environment or set it to 3004. This is better because when we
+mention directly to use port 3004, no matter what our app will alwas be running
+on port 3004 and it always look for that port itself, but it gets difficult
+when that port is not available in other environments like
+AWS, Heroku..etc. So when we set the port acc. to environment
+we are making our app use the port available in that particular environment.
+
+REFER "http://stackoverflow.com/questions/18864677/what-is-process-env-port-in-node-js"
+
+DIFFERENCE between res.location and res.redirect
+	
+	res.location--> just sets teh header and don't set the status code and will
+	not end untill unless we call res.end() after res.location();
+		BUT
+	res.redirect--> sets the header and also the status code to 302 also ends the current response and 
+	redirects the user to the specified location inside of the parenthesis of redirect();
+	REFER "http://stackoverflow.com/questions/22677940/difference-between-location-and-redirect-in-node-js"	
+
+FOR SESSION-->
+REFER "http://stackoverflow.com/questions/17991050/how-to-set-the-session-timeout-after-log-in-passportjs"	
+
+REFER "http://stackoverflow.com/questions/9291548/how-can-i-find-the-session-id-when-using-express-connect-and-a-session-store"
+to store the session id of a user.
+
+
+-----------
+/*var e_name = req.body.name;
+  		var e_email = req.body.email;
+  		var e_pswd = req.body.password;
+  		if(!e_name || !e_email || !e_pswd ){
+  			c_msg = "all the credentials are required";
+  		}*/
+
+
+
+  		var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+		console.log("here "+fullUrl + typeof(fullUrl));
+		console.log("after localhost " + req.originalUrl);
+		console.log("response" + res);
+
+	    //res.location('#/employees');
+	    //res.redirect('#/get-employees');
+	    //window.location.assign("https://localhost:3004/#"+req.originalUrl.split('/login')[0]);
+
+
+	  REFER
+	  1. https://stormpath.com/blog/nodejs-jwt-create-verify
+	  2. https://www.youtube.com/watch?v=oXxbB5kv9OA 
+	  3. http://stackoverflow.com/questions/7042340/error-cant-set-headers-after-they-are-sent-to-the-client
+
+	  3- ONE IS FOR YOU GOT AN ERROR that "can't set header after the req has been sent" then you removed the line 
+	  			res.status(200) 
+	  			in controllers/getEmployees.js, because already the status has been set, so it can't accept to set the status again, that is the reason you removed the line.
+	  			Refer the 3rd link to look in detail.
+
+	  			*****IMPORTANT*****
+	  4. http://sahatyalkabov.com/how-to-implement-password-reset-in-nodejs/
+	  			to set exp time to passowrds and resetting the password.
+	  			*****IMPORTANT*****
+
+	  5. https://www.toptal.com/web/cookie-free-authentication-with-json-web-tokens-an-example-in-laravel-and-angularjs
+	  Refer 5 to see another approach for jwts
+
+	  6. ONE MORE ERROR is unexpected token at nodemodules/body_parser/lib/types/json.js, 
+	  	solution: REFER "http://stackoverflow.com/questions/35578694/syntaxerror-unexpected-token-n"	
+	  		--you got this because when yu are sending the email to forgotController, inside of the
+	  		post request, initially it wasn't an object because it was
+	  				var email = $scope.email and you are sending this as a parameter to the
+	  				post request, INSTEAD YOU NEED TO SEND IN AN OBJECT WHICH MUST BE A JSON FORMAT ONE
+	  				so inorder to avoid this error you sent the email entered as a json format
+	  				by changing it to..
+
+	  				var email = {
+	  					email: $scope.email
+	  				};
+	  7. ONE MORE THING HERE IS the nodemailer gave you an error saying you must use
+	  version 0.7.1, instead of 2.7.1 to get the email.						
+
+	  TO UPDATE IN MONGODB
+	  
+	  db.employees.update({email: 't@t.com'},{$set:{roles:['readWrite', 'dbAdmin']}})
+
+	  FLOW CHART
+	  https://www.ctl.io/developers/blog/post/build-user-authentication-with-node-js-express-passport-and-mongodb	
+
+
+	  apply middleware for post requests
+	  REFER "http://stackoverflow.com/questions/31718100/before-filter-for-all-post-requests-in-node-js"
+
+
+	  -----------------
+	  async.waterfall([
+    function(done) {
+      var smtpTransport = nodemailer.createTransport('SMTP', {
+        service: 'SendGrid',
+        auth: {
+          user: 'madhuri19',
+          pass: 'Madhuri@123'
+        }
+      });
+      var mailOptions = {
+        to: 'madhurichinthakindi332@gmail.com',
+        from: req.body.email,
+        subject: 'Request for Registration of employee',
+        text: 'A new Employee wants to create an account with the following details' +'\n\n' +
+        'Name: ' + req.body.name + '\n\n' + 'Email: ' + req.body.email + '\n\n' + 
+        'DL Number: ' + req.body.dl
+    };
+      smtpTransport.sendMail(mailOptions, function(err) {
+        //req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
+        console.log('email sent to Admin');
+        done(err, 'done');
+      });
+    }
+  ], function(err) {
+    if (err) return next(err);
+    //res.redirect('/forgot');
+  });
+    
+};
+
+
+	    	

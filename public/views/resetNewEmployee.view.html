@@ -1,0 +1,36 @@
+<!-- <p ng-if="message"><strong>{{message}}</strong></p>
+<p ng-if="success"><strong>{{success}}</strong></p>
+
+<form ng-submit="updatePassword()">
+	New Password: <br>
+	<input type="password" ng-model="newPassword"><br>
+	Confirm Password: <br>
+	<input type="password" ng-model="confirmPassword"><br>
+	Enter your DL Number: <br>
+	<input type="number" ng-model="dl"><br>
+	<button type="submit">Update Password</button>
+</form><br>
+
+<button ng-if="success"><a href="#/login">Login</a></button> -->
+
+
+<p ng-if="message"><strong>{{message}}</strong></p>
+<p ng-if="success"><strong>{{success}}</strong></p>
+
+<form ng-submit="updatePassword()">
+	<div class="form-group">
+		<label>New Password</label>
+		<input type="password" class="form-control" ng-model="newPassword">
+	</div>
+	<div class="form-group">
+		<label>Confirm Password</label>
+		<input type="password" class="form-control" ng-model="confirmPassword">
+	</div>
+	<div class="form-group">
+		<label>Enter your DL Number</label>
+		<input type="number" class="form-control" ng-model="dl">
+	</div>
+	<button type="submit" class="btn">Update Password</button>
+</form>
+
+<button ng-if="success" class="btn"><a href="#/login">Login</a></button>

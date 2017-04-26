@@ -1,0 +1,15 @@
+<div>
+<!-- <button ng-controller="logoutCtrl">
+<span ng-click="onLogout()">Logout</span></button><br> -->
+
+<button class="btn btn-info"><a href="#/update/{{employee._id}}">Update Profile</a></button>
+<button class="btn btn-danger" ng-click="deleteEmployee(employee._id)">Delete Profile</button>
+
+
+
+<button class="btn btn-success"><a href="#/get-employees">Get all employees</a></button>
+	<h1>Welcome Employee</h1>
+		<p><strong>Name: </strong>{{employee.name}}</p>
+		<p><strong>Email: </strong>{{employee.email}}</p>
+	
+</div>
